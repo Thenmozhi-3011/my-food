@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Place Your Order</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+
+    .order-container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .payment-options, .upi-options {
+      margin-top: 10px;
+    }
+
+    .qr-section {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .qr-section img {
+      width: 200px;
+      height: auto;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      background: green;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message {
+      background: #d4edda;
+      color: #155724;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="order-container">
+    <h2>Delivery Details</h2>
+    <form id="order-form" onsubmit="handleSubmit(event)">
+      <label for="name">Name</label>
+      <input type="text" id="name" required />
+
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" required />
+
+      <label for="address">Address</label>
+      <textarea id="address" rows="3" required></textarea>
+
+      <label>Payment Method</label>
+      <select id="payment" onchange="toggleUPIOptions()" required>
+        <option value="">-- Select --</option>
+        <option value="cod">Cash on Delivery</option>
+        <option value="online">Online Payment</option>
+      </select>
+
+      <div id="upi-options" class="upi-options hidden">
+        <label>Select UPI App</label>
+        <select id="upiApp" onchange="showQR()">
+          <option value="">-- Choose --</option>
+          <option value="gpay">Google Pay</option>
+          <option value="phonepe">PhonePe</option>
+        </select>
+      </div>
+
+      <div id="qr-section" class="qr-section hidden">
+        <img id="qr-image" src="" alt="QR Code" />
+        <p id="total-amount"></p>
+      </div>
+
+      <button type="submit">Place Order</button>
+    </form>
+
+    <div id="message" class="message hidden">Your order has been placed ✅</div>
+  </div>
+
+  <script>
+    const total = JSON.parse(sessionStorage.getItem("cart") || "[]").reduce((sum, item) => sum + item.price, 0);
+
+    function toggleUPIOptions() {
+      const payment = document.getElementById("payment").value;
+      document.getElementById("upi-options").classList.toggle("hidden", payment !== "online");
+      document.getElementById("qr-section").classList.add("hidden");
+    }
+
+    function showQR() {
+      const upi = document.getElementById("upiApp").value;
+      const qrImage = document.getElementById("qr-image");
+      const qrSection = document.getElementById("qr-section");
+      const totalAmount = document.getElementById("total-amount");
+
+      if (upi === "gpay") {
+        qrImage.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png";
+        totalAmount.textContent = `Total: ₹${total}`;
+        qrSection.classList.remove("hidden");
+      } else if (upi === "phonepe") {
+        qrImage.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png";
+        totalAmount.textContent = `Total: ₹${total}`;
+        qrSection.classList.remove("hidden");
+      } else {
+        qrSection.classList.add("hidden");
+      }
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      const payment = document.getElementById("payment").value;
+
+      if (payment === "cod") {
+        document.getElementById("message").classList.remove("hidden");
+        sessionStorage.clear();
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+      } else if (payment === "online") {
+        const upi = document.getElementById("upiApp").value;
+        if (!upi) {
+          alert("Please select a UPI app.");
+          return;
+        }
+        alert("Please complete the payment by scanning the QR code.");
+      } else {
+        alert("Please select a payment method.");
+      }
+    }
+  </script>
+</body>
+</html>

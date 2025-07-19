@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .cart-row button {
+      background: red;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #total-price {
+      font-weight: bold;
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .order-out {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .order-out button {
+      background: green;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛒 Cart</h1>
+  <a href="index.html">← Back to Home</a>
+
+  <div id="cart-items"></div>
+  <div id="total-price"></div>
+
+  <div class="order-out" id="order-button-container"></div>
+
+  <script>
+    let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+    function renderCart() {
+      const container = document.getElementById("cart-items");
+      const totalBox = document.getElementById("total-price");
+      const orderButtonContainer = document.getElementById("order-button-container");
+
+      container.innerHTML = '';
+      orderButtonContainer.innerHTML = '';
+      let total = 0;
+
+      if (cart.length === 0) {
+        container.innerHTML = "<p>No items in cart.</p>";
+        totalBox.innerHTML = "";
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        total += item.price;
+        const row = document.createElement("div");
+        row.className = "cart-row";
+        row.innerHTML = `
+          <span>${item.name}</span>
+          <span>₹${item.price}</span>
+          <button onclick="removeItem(${index})">Remove</button>
+        `;
+        container.appendChild(row);
+      });
+
+      totalBox.innerHTML = `
+        <span>Total</span>
+        <span>₹${total}</span>
+      `;
+
+      // Add Order Out button
+      orderButtonContainer.innerHTML = `
+        <a href="order.html">
+          <button>Order Out</button>
+        </a>
+      `;
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      sessionStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>
