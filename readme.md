@@ -55,7 +55,7 @@ This is a basic food delivery web application built using **HTML**, **CSS**, and
 
 ##  Preview
 
-  ---🔗 **Live Demo**: [Click here to view the site](https://github.com/Thenmozhi-3011/my-food.git)
+  ---🔗 **Live Demo**: [Click here to view the site](https://thenmozhi-3011.github.io/my-food/)
 
 
 ## 🧑‍💻 Developed By
